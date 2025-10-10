@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.CreateEndpointHitDto;
@@ -46,7 +47,6 @@ public class StatsController {
         responseCode = "400", description = "Неверные параметры запроса",
         content = @Content(schema = @Schema(implementation = Void.class)))
     public void createHit(@Valid @RequestBody CreateEndpointHitDto createEndpointHitDto) {
-
         log.info("Controller: createHit requestBody={}", createEndpointHitDto);
         statsService.createHit(createEndpointHitDto);
     }
@@ -66,9 +66,10 @@ public class StatsController {
     @ApiResponse(
         responseCode = "200", description = "Статистика успешно получена",
         content = @Content(schema = @Schema(implementation = ViewStatsDto.class)))
-    public List<ViewStatsDto> getStats(String start, String end, List<String> uris,
-        boolean unique) {
-
+    public List<ViewStatsDto> getStats(@RequestParam("start") String start,
+        @RequestParam("end") String end,
+        @RequestParam(value = "uris", required = false) List<String> uris,
+        @RequestParam(value = "unique", defaultValue = "false") boolean unique) {
         log.debug("start={}, end={}, uris={}, unique={}", start, end, uris, unique);
         StatsRequest request = StatsRequest.of(start, end, uris, unique);
         log.info("Controller: getStats request={}", request);
