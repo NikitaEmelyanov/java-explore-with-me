@@ -31,7 +31,7 @@ services:
       retries: 10
 
   stats-server:
-    build: ./stat-service/server
+    build: ./stats/stats-server
     container_name: stats_server
     ports:
       - "9090:9090"

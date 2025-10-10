@@ -1,6 +1,7 @@
 package ru.practicum.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,7 +16,7 @@ import lombok.Setter;
  * Сущность для хранения информации о обращениях к эндпоинтам.
  */
 @Entity
-@Table(name = "stats")
+@Table(name = "endpoint_hits")
 @Getter
 @Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -26,6 +27,7 @@ public class EndpointHit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     @Schema(description = "Уникальный идентификатор записи", example = "1")
+    @Column(name = "hit_id")
     private Long id;
 
     @Schema(description = "Идентификатор сервиса", example = "ewm-main-service")
