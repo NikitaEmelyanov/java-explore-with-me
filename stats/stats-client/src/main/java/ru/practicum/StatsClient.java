@@ -1,8 +1,5 @@
 package ru.practicum;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -13,21 +10,16 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriBuilder;
 import ru.practicum.exception.StatsClientException;
 
-/**
- * Клиент для взаимодействия с сервисом статистики.
- */
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
 @Slf4j
 @Component
 public class StatsClient {
-
     private final RestClient restClient;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    /**
-     * Конструктор клиента статистики.
-     *
-     * @param serverUrl URL сервиса статистики
-     */
     public StatsClient(@Value("${stats-server.url:http://localhost:9090}") String serverUrl) {
         this.restClient = RestClient.builder()
             .baseUrl(serverUrl)
@@ -35,12 +27,6 @@ public class StatsClient {
             .build();
     }
 
-    /**
-     * Сохраняет информацию об обращении к эндпоинту.
-     *
-     * @param createEndpointHitDto DTO с информацией об обращении
-     * @throws StatsClientException если произошла ошибка при сохранении
-     */
     public void saveHit(CreateEndpointHitDto createEndpointHitDto) {
         try {
             restClient.post()
@@ -57,16 +43,6 @@ public class StatsClient {
         }
     }
 
-    /**
-     * Получает статистику за указанный период.
-     *
-     * @param start  начало периода
-     * @param end    конец периода
-     * @param uris   список URI для фильтрации
-     * @param unique учитывать только уникальные IP
-     * @return список DTO со статистикой
-     * @throws StatsClientException если произошла ошибка при получении статистики
-     */
     public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end,
         List<String> uris, Boolean unique) {
         try {
