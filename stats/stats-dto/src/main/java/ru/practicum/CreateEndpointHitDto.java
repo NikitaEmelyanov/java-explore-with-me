@@ -3,7 +3,6 @@ package ru.practicum;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-
 import java.time.LocalDateTime;
 
 public record CreateEndpointHitDto(
@@ -17,7 +16,7 @@ public record CreateEndpointHitDto(
     String ip,
 
     @NotNull(message = "Временная метка не может быть null")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime timestamp
 ) {
 }
