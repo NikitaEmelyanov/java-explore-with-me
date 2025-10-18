@@ -4,12 +4,21 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.dto.NewEventDto;
@@ -20,13 +29,12 @@ import ru.practicum.request.dto.EventRequestStatusUpdateResult;
 import ru.practicum.request.dto.ParticipationRequestDto;
 import ru.practicum.request.service.RequestService;
 
-import java.util.List;
-
 @Slf4j
 @RestController
 @RequestMapping("/users/{userId}/events")
 @RequiredArgsConstructor
 public class PrivateEventController {
+
     private final EventService eventService;
     private final RequestService requestService;
 
@@ -67,7 +75,8 @@ public class PrivateEventController {
         @PathVariable("eventId") @Positive Long eventId,
         @RequestBody @Valid UpdateEventUserRequest request
     ) {
-        log.debug("Controller: updateEvent with id={} and eventId={} with data {}", userId, eventId, request);
+        log.debug("Controller: updateEvent with id={} and eventId={} with data {}", userId, eventId,
+            request);
         return eventService.updateEvent(userId, eventId, request);
     }
 
@@ -86,7 +95,8 @@ public class PrivateEventController {
         @PathVariable("eventId") @Positive Long eventId,
         @RequestBody EventRequestStatusUpdateRequest request
     ) {
-        log.debug("Controller: updateRequestStatus with id={} and eventId={} with data {}", userId, eventId, request);
+        log.debug("Controller: updateRequestStatus with id={} and eventId={} with data {}", userId,
+            eventId, request);
         return requestService.updateRequestStatus(userId, eventId, request);
     }
 }

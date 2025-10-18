@@ -1,5 +1,7 @@
 package ru.practicum.category.service;
 
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -15,14 +17,12 @@ import ru.practicum.event.repository.EventRepository;
 import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.NotFoundException;
 
-import java.util.List;
-import java.util.Optional;
-
 @Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
+
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
     private final EventRepository eventRepository;
@@ -92,7 +92,8 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Category getCategoryByIdOrThrow(Long categoryId) {
         return categoryRepository.findById(categoryId)
-            .orElseThrow(() -> new NotFoundException("Категория с id " + categoryId + " не найдена"));
+            .orElseThrow(
+                () -> new NotFoundException("Категория с id " + categoryId + " не найдена"));
     }
 
     private void checkCategoryNameUnique(String name, Long excludedId) {

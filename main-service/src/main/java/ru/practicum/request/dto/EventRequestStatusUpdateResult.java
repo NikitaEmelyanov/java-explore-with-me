@@ -6,4 +6,5 @@ public record EventRequestStatusUpdateResult(
     List<ParticipationRequestDto> confirmedRequests,
     List<ParticipationRequestDto> rejectedRequests
 ) {
+
 }

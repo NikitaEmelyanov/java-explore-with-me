@@ -9,4 +9,5 @@ public record LocationDto(
     @NotNull(message = "Долгота не может быть null")
     Float lon
 ) {
+
 }

@@ -1,5 +1,6 @@
 package ru.practicum.request.mapper;
 
+import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import ru.practicum.event.model.Event;
@@ -8,8 +9,6 @@ import ru.practicum.request.dto.ParticipationRequestDto;
 import ru.practicum.request.model.Request;
 import ru.practicum.request.model.RequestStatus;
 import ru.practicum.user.model.User;
-
-import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface RequestMapper {

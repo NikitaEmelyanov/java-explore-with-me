@@ -10,4 +10,5 @@ public record CategoryDto(
     @Size(min = 1, max = 50, message = "Название категории должно содержать от {min} до {max} символов")
     String name
 ) {
+
 }

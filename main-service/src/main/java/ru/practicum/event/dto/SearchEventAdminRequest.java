@@ -1,9 +1,8 @@
 package ru.practicum.event.dto;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.format.annotation.DateTimeFormat;
 
 public record SearchEventAdminRequest(
     List<Long> users,
@@ -22,4 +21,5 @@ public record SearchEventAdminRequest(
 
     Integer size
 ) {
+
 }

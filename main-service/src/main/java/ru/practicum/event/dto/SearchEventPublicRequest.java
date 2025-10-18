@@ -1,9 +1,8 @@
 package ru.practicum.event.dto;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.format.annotation.DateTimeFormat;
 
 public record SearchEventPublicRequest(
     String text,
@@ -26,6 +25,7 @@ public record SearchEventPublicRequest(
 
     Integer size
 ) {
+
     public SearchEventPublicRequest {
         if (onlyAvailable == null) {
             onlyAvailable = false;

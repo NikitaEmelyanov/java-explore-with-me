@@ -3,26 +3,31 @@ package ru.practicum.event.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.dto.SearchEventPublicRequest;
 import ru.practicum.event.service.EventService;
-
-import java.util.List;
 
 @Slf4j
 @RestController
 @RequestMapping("/events")
 @RequiredArgsConstructor
 public class PublicEventController {
+
     private final EventService eventService;
 
     @GetMapping
-    public List<EventShortDto> getEventsPublic(@ModelAttribute @Valid SearchEventPublicRequest request,
+    public List<EventShortDto> getEventsPublic(
+        @ModelAttribute @Valid SearchEventPublicRequest request,
         HttpServletRequest httpRequest
     ) {
         int size = (request.size() != null && request.size() > 0) ? request.size() : 10;
@@ -33,7 +38,8 @@ public class PublicEventController {
     }
 
     @GetMapping("/{id}")
-    public EventFullDto getEventByIdPublic(@PathVariable @Positive Long id, HttpServletRequest request) {
+    public EventFullDto getEventByIdPublic(@PathVariable @Positive Long id,
+        HttpServletRequest request) {
         log.debug("Controller: getEventByIdPublic with id={}", id);
         return eventService.getEventByIdPublic(id, request.getRemoteAddr());
     }

@@ -1,8 +1,11 @@
 package ru.practicum.event.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.*;
-
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 public record NewEventDto(
@@ -36,6 +39,7 @@ public record NewEventDto(
     @Size(min = 3, max = 120, message = "Заголовок должен содержать от {min} до {max} символов")
     String title
 ) {
+
     public NewEventDto {
         if (paid == null) {
             paid = Boolean.FALSE;

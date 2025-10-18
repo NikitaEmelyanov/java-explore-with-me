@@ -1,5 +1,9 @@
 package ru.practicum.user.service;
 
+import static org.springframework.data.domain.Sort.Direction.ASC;
+
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -16,16 +20,12 @@ import ru.practicum.user.mapper.UserMapper;
 import ru.practicum.user.model.User;
 import ru.practicum.user.repository.UserRepository;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.springframework.data.domain.Sort.Direction.ASC;
-
 @Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
@@ -33,7 +33,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDto createUser(NewUserRequest userRequest) {
         if (userRepository.existsByEmail(userRequest.email())) {
-            throw new ConflictException("Пользователь с таким e-mail уже существует: " + userRequest.email());
+            throw new ConflictException(
+                "Пользователь с таким e-mail уже существует: " + userRequest.email());
         }
 
         User user = userMapper.toEntity(userRequest);

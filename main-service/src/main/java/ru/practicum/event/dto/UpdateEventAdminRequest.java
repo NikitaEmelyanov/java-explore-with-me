@@ -4,9 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
-import ru.practicum.event.model.StateActionAdmin;
-
 import java.time.LocalDateTime;
+import ru.practicum.event.model.StateActionAdmin;
 
 public record UpdateEventAdminRequest(
     @Size(min = 20, max = 2000, message = "Недопустимое количество символов")
@@ -35,4 +34,5 @@ public record UpdateEventAdminRequest(
     @Size(min = 3, max = 120, message = "Заголовок должен содержать от {min} до {max} символов")
     String title
 ) {
+
 }

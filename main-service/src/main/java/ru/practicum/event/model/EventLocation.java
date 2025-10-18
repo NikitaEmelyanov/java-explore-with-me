@@ -9,6 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class EventLocation {
+
     @NotNull(message = "Широта не может быть null")
     private Float lat;
 

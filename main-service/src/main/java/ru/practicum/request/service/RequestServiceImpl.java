@@ -1,5 +1,8 @@
 package ru.practicum.request.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,15 +23,12 @@ import ru.practicum.request.repository.RequestRepository;
 import ru.practicum.user.model.User;
 import ru.practicum.user.service.UserService;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class RequestServiceImpl implements RequestService {
+
     private final EventService eventService;
     private final RequestRepository requestRepository;
     private final RequestMapper requestMapper;
@@ -40,17 +40,22 @@ public class RequestServiceImpl implements RequestService {
         User user = userService.getUserByIdOrThrow(userId);
         Event event = eventService.getEventOrThrow(eventId);
 
-        if (requestRepository.existsByEventIdAndRequesterId(eventId, userId))
+        if (requestRepository.existsByEventIdAndRequesterId(eventId, userId)) {
             throw new ConflictException("Нельзя добавить повторный запрос");
+        }
 
-        if (event.getInitiator().getId().equals(userId))
-            throw new ConflictException("Инициатор события не может добавить запрос на участие в своём событии");
+        if (event.getInitiator().getId().equals(userId)) {
+            throw new ConflictException(
+                "Инициатор события не может добавить запрос на участие в своём событии");
+        }
 
-        if (event.getState() != EventState.PUBLISHED)
+        if (event.getState() != EventState.PUBLISHED) {
             throw new ConflictException("Нельзя участвовать в неопубликованном событии");
+        }
 
         if (!hasSlots(event)) {
-            throw new ConflictException("Достигнут лимит по количеству участников события с id=" + eventId);
+            throw new ConflictException(
+                "Достигнут лимит по количеству участников события с id=" + eventId);
         }
 
         Request request = requestMapper.toEntity(event, user, RequestStatus.PENDING);
@@ -62,7 +67,8 @@ public class RequestServiceImpl implements RequestService {
 
         request = requestRepository.save(request);
 
-        log.info("Добавление нового запроса на участие в событии с id={} от пользователя с id={}", eventId, userId);
+        log.info("Добавление нового запроса на участие в событии с id={} от пользователя с id={}",
+            eventId, userId);
         return requestMapper.toDto(request);
     }
 
@@ -80,7 +86,8 @@ public class RequestServiceImpl implements RequestService {
         Request request = getRequestOrThrow(requestId);
 
         if (!request.getRequester().getId().equals(userId)) {
-            throw new ConflictException("Запрос с id=" + requestId + " не принадлежит пользователю с id=" + userId);
+            throw new ConflictException(
+                "Запрос с id=" + requestId + " не принадлежит пользователю с id=" + userId);
         }
 
         request.canceled();
@@ -93,8 +100,10 @@ public class RequestServiceImpl implements RequestService {
     public List<ParticipationRequestDto> getRequestsByEvent(Long userId, Long eventId) {
         Event event = eventService.getEventOrThrow(eventId);
 
-        if (!event.getInitiator().getId().equals(userId))
-            throw new ValidationException("Пользователь с id=" + userId + " не является создателем события");
+        if (!event.getInitiator().getId().equals(userId)) {
+            throw new ValidationException(
+                "Пользователь с id=" + userId + " не является создателем события");
+        }
 
         log.info("Получение информации о запросах на участие в событии с id={}", eventId);
         return requestRepository.findAllParticipationRequestByEventId(eventId).stream()
@@ -104,32 +113,42 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     @Transactional
-    public EventRequestStatusUpdateResult updateRequestStatus(Long userId, Long eventId, EventRequestStatusUpdateRequest request) {
+    public EventRequestStatusUpdateResult updateRequestStatus(Long userId, Long eventId,
+        EventRequestStatusUpdateRequest request) {
         Event event = eventService.getEventOrThrow(eventId);
 
-        if (!event.getInitiator().getId().equals(userId))
-            throw new ValidationException("Пользователь с id=" + userId + " не является создателем события");
+        if (!event.getInitiator().getId().equals(userId)) {
+            throw new ValidationException(
+                "Пользователь с id=" + userId + " не является создателем события");
+        }
 
-        if (!event.isRequestModeration() || event.getParticipantLimit() == 0)
+        if (!event.isRequestModeration() || event.getParticipantLimit() == 0) {
             throw new ValidationException("Для данного события подтверждение заявок не требуется");
+        }
 
         RequestStatus newStatus = request.status();
-        if (newStatus == RequestStatus.PENDING)
-            throw new ValidationException("Устанавливать можно только статусы CONFIRMED или REJECTED");
+        if (newStatus == RequestStatus.PENDING) {
+            throw new ValidationException(
+                "Устанавливать можно только статусы CONFIRMED или REJECTED");
+        }
 
-        List<Request> requestsForUpdate = requestRepository.findAllRequestById(request.requestIds());
+        List<Request> requestsForUpdate = requestRepository.findAllRequestById(
+            request.requestIds());
 
         validateAllRequestsExist(request.requestIds(), requestsForUpdate);
         validateRequestsState(requestsForUpdate, eventId);
 
-        int currentConfirmedCount = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
+        int currentConfirmedCount = requestRepository.countByEventIdAndStatus(eventId,
+            RequestStatus.CONFIRMED);
         int availableSlots = event.getParticipantLimit() - currentConfirmedCount;
 
         List<ParticipationRequestDto> confirmedRequests = new ArrayList<>();
         List<ParticipationRequestDto> rejectedRequests = new ArrayList<>();
 
         if (newStatus == RequestStatus.CONFIRMED) {
-            if (availableSlots <= 0) throw new ConflictException("Свободных мест больше нет");
+            if (availableSlots <= 0) {
+                throw new ConflictException("Свободных мест больше нет");
+            }
 
             int confirmedCount = 0;
             for (Request req : requestsForUpdate) {
@@ -154,7 +173,8 @@ public class RequestServiceImpl implements RequestService {
 
                 if (!pendingRequests.isEmpty()) {
                     requestRepository.saveAll(pendingRequests);
-                    log.info("Автоматически отклонено {} заявок из-за исчерпания лимита на событие с id={}",
+                    log.info(
+                        "Автоматически отклонено {} заявок из-за исчерпания лимита на событие с id={}",
                         pendingRequests.size(), eventId);
                 }
             }
@@ -167,10 +187,12 @@ public class RequestServiceImpl implements RequestService {
 
         requestRepository.saveAll(requestsForUpdate);
 
-        log.info("Обновление статусов заявок на участие в событии с id={}: подтверждено={}, отклонено={}",
+        log.info(
+            "Обновление статусов заявок на участие в событии с id={}: подтверждено={}, отклонено={}",
             eventId, confirmedRequests.size(), rejectedRequests.size());
 
-        return requestMapper.toEventRequestStatusUpdateResultDto(confirmedRequests, rejectedRequests);
+        return requestMapper.toEventRequestStatusUpdateResultDto(confirmedRequests,
+            rejectedRequests);
     }
 
     private Request getRequestOrThrow(Long requestId) {
@@ -180,8 +202,11 @@ public class RequestServiceImpl implements RequestService {
 
     private boolean hasSlots(Event event) {
         Integer limit = event.getParticipantLimit();
-        if (limit == null || limit == 0) return true;
-        long confirmed = requestRepository.countByEventIdAndStatus(event.getId(), RequestStatus.CONFIRMED);
+        if (limit == null || limit == 0) {
+            return true;
+        }
+        long confirmed = requestRepository.countByEventIdAndStatus(event.getId(),
+            RequestStatus.CONFIRMED);
         return confirmed < limit;
     }
 
@@ -206,7 +231,8 @@ public class RequestServiceImpl implements RequestService {
             }
 
             if (!req.getEvent().getId().equals(eventId)) {
-                throw new ConflictException("Запрос с id=" + req.getId() + " не относится к событию с id=" + eventId);
+                throw new ConflictException(
+                    "Запрос с id=" + req.getId() + " не относится к событию с id=" + eventId);
             }
         }
     }

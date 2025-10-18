@@ -14,4 +14,5 @@ public record NewUserRequest(
     @Size(min = 6, max = 254)
     String email
 ) {
+
 }

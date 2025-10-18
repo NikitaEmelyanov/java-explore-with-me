@@ -1,10 +1,9 @@
 package ru.practicum.event.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import java.time.LocalDateTime;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.user.dto.UserShortDto;
-
-import java.time.LocalDateTime;
 
 public record EventShortDto(
     Long id,
@@ -26,4 +25,5 @@ public record EventShortDto(
 
     Long views
 ) {
+
 }
