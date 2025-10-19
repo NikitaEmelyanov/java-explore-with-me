@@ -17,6 +17,7 @@ import java.util.List;
 @Slf4j
 @Component
 public class StatsClient {
+
     private final RestClient restClient;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -44,7 +45,7 @@ public class StatsClient {
     }
 
     public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end,
-        List<String> uris, Boolean unique) {
+        List<String> uris, boolean unique) {
         try {
             List<ViewStatsDto> result = restClient.get()
                 .uri(uriBuilder -> {
@@ -55,9 +56,9 @@ public class StatsClient {
                     if (uris != null && !uris.isEmpty()) {
                         uris.forEach(uri -> builder.queryParam("uris", uri));
                     }
-                    if (unique != null) {
-                        builder.queryParam("unique", unique);
-                    }
+
+                    builder.queryParam("unique", unique);
+
                     return builder.build();
                 })
                 .retrieve()
@@ -65,11 +66,11 @@ public class StatsClient {
                 });
 
             log.debug("Получено записей статистики: {}", result != null ? result.size() : 0);
-            return result != null ? result : List.of();
 
+            return result;
         } catch (Exception exception) {
             log.error("Ошибка при получении статистики: {}", exception.getMessage());
-            throw new StatsClientException("Couldn't get statistics", exception);
+            throw new StatsClientException("Statistics could not be retrieved", exception);
         }
     }
 }
