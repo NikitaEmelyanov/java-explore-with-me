@@ -8,8 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.event.dto.EventFullDto;
@@ -27,7 +27,7 @@ public class PublicEventController {
 
     @GetMapping
     public List<EventShortDto> getEventsPublic(
-        @ModelAttribute @Valid SearchEventPublicRequest request,
+        @RequestBody @Valid SearchEventPublicRequest request,
         HttpServletRequest httpRequest
     ) {
         int size = (request.size() != null && request.size() > 0) ? request.size() : 10;
